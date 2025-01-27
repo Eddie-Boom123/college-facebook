@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network</title>
+    <style>
+        :root {
+            --primary-color: #EB6600;
+            --secondary-color: #28363D;
+            --background-color: #f0f2f5;
+            --card-background: #3F5E60;
+            --text-color: #FFFFFF;
+            --hover-color: #D85500;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+        }
+        header {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        nav a {
+            color: var(--text-color);
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: var(--primary-color);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+        }
+         .notifications {
+            flex: 1;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .main {
+            flex: 2;
+            padding: 20px;
+            background-color: var(--text-color);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .post, .trending-post, .group-item {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+        .post:hover, .trending-post:hover, .group-item:hover {
+            background-color: var(--primary-color);
+        }
+        .notifications h2,  .main h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+        .new-post {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .new-post input, .new-post button, .new-post textarea {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .new-post button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .new-post button:hover {
+            background-color: var(--hover-color);
+        }
+        .like-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .like-button:hover {
+            color: var(--hover-color);
+        }
+        .notification-item {
+            padding: 5px 0;
+        }
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+        input[type="file"] {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: var(--text-color);
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        input[type="file"]:hover {
+            border-color: var(--primary-color);
+        }
+        .comment-section {
+            margin-top: 15px;
+            border-top: 1px solid var(--text-color);
+            padding-top: 10px;
+        }
+        .comment {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        .friend-list, .pending-requests, .group-list {
+            margin-top: 15px;
+        }
+        .friend-item, .request-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .request-item button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .request-item button:hover {
+            background-color: var(--hover-color);
+        }
+        .message-list, .message-container {
+            margin-top: 15px;
+        }
+        .message-item {
+            padding: 10px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .message-item:hover {
+            background-color: var(--primary-color);
+        }
+        .message-content {
+            margin-top: 10px;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+        }
+        .back-to-top:hover {
+            background-color: var(--hover-color);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar, .notifications, .main {
+                width: 100%;
+                flex: none; /* Remove flex-grow */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Social Network</h1>
+        <nav>
+            <div class="dropdown">
+                <a href="#">Menu</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="showPage('home')">Home</a>
+                    <a href="#" onclick="showPage('trends')">Reels</a>
+                    <a href="#" onclick="showPage('friends')">Friends</a>
+                    <a href="#" onclick="showPage('messages')">Messages</a>
+                    <a href="#" onclick="showPage('groups')">Groups</a>
+                    <a href="#" onclick="showPage('profile')">Profile</a>
+                    <a href="#">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Your Profile</h2>
+            <div class="profile-container">
+                <img id="profileImage" class="profile-image" src="https://via.placeholder.com/100" alt="Profile Image">
+                <input type="file" id="imageUpload" accept="image/*" onchange="uploadImage()" aria-label="Upload Profile Image" />
+            </div>
+            <p><strong>Name:</strong> Edmund kyeremeh</p>
+            <p><strong>Email:</strong> Edmund@example.com</p>
+        </div>
+        <div class="main">
+            <div id="home" class="page">
+                <h2>Create a New Post</h2>
+                <div class="new-post">
+                    <textarea id="postInput" placeholder="What's on your mind?" rows="3" aria-label="Post content"></textarea>
+                    <input type="file" id="mediaUpload" accept="image/*,video/*" aria-label="Upload Media" />
+                    <button onclick="addPost()">Post</button>
+                </div>
+                <h2>Latest Posts</h2>
+                <div id="postsContainer"></div>
+            </div>
+            <div id="trends" class="page" style="display:none;">
+                <h2>Trending Reels</h2>
+                <div class="trending-list" id="trendingList"></div>
+            </div>
+            <div id="friends" class="page" style="display:none;">
+                <h2>Friends List</h2>
+                <div class="friend-list" id="friendList"></div>
+                <h2>Pending Requests</h2>
+                <div class="pending-requests" id="pendingRequests"></div>
+                <input type="text" id="friendInput" placeholder="Enter friend's name" aria-label="Friend's name" />
+                <button onclick="sendFriendRequest()">Send Friend Request</button>
+            </div>
+            <div id="messages" class="page" style="display:none;">
+                <h2>Messages</h2>
+                <div class="message-list" id="messageList"></div>
+                <h2>Chat with:</h2>
+                <input type="text" id="messageUser Input" placeholder="Enter user's name" aria-label="User 's name" />
+                <textarea id="messageInput" placeholder="Type your message..." rows="3" aria-label="Message content"></textarea>
+                <button onclick="sendMessage()">Send Message</button>
+                <div class="message-container" id="messageContainer" style="display:none;">
+                    <h3>Conversation</h3>
+                    <div class="message-content" id="messageContent"></div>
+                </div>
+            </div>
+            <div id="groups" class="page" style="display:none;">
+                <h2>Available Groups</h2>
+                <div class="group-list" id="groupList"></div>
+                <h2>My Groups</h2>
+                <div class="my-group-list" id="myGroupList"></div>
+                <input type="text" id="groupInput" placeholder="Enter group name" aria-label="Group name" />
+                <button onclick="joinGroup()">Join Group</button>
+            </div>
+        </div>
+        <div class="notifications">
+            <h2>Notifications</h2>
+            <ul id="notificationsList"></ul>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTopBtn" onclick="scrollToTop()">Top</button>
+
+    <script>
+        let postCount = 0;
+        const friends = [];
+        const pendingRequests = [];
+        const messages = {};
+        const trendingPosts = [];
+        const groups = [];
+        const myGroups = [];
+
+        // Scroll to top functionality
+        window.onscroll = function() {
+            const button = document.getElementById("backToTopBtn");
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                button.style.display = "block";
+            } else {
+                button.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+
+        function uploadImage() {
+            const imageUpload = document.getElementById('imageUpload');
+            const profileImage = document.getElementById('profileImage');
+            const file = imageUpload.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addPost() {
+            const postInput = document.getElementById('postInput');
+            const mediaUpload = document.getElementById('mediaUpload');
+            const postsContainer = document.getElementById('postsContainer');
+
+            if (postInput.value.trim() !== "" || mediaUpload.files.length > 0) {
+                const newPost = document.createElement('div');
+                newPost.className = 'post';
+
+                const postContent = document.createElement('p');
+                postContent.textContent = postInput.value;
+
+                newPost.appendChild(postContent);
+
+                if (mediaUpload.files.length > 0) {
+                    const file = mediaUpload.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (file.type.startsWith('image/')) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.width = '100%';
+                            img.style.borderRadius = '10px';
+                            newPost.appendChild(img);
+                        } else if (file.type.startsWith('video/')) {
+                            const video = document.createElement('video');
+                            video.src = e.target.result;
+                            video.controls = true;
+                            video.style.width = '100%';
+                            video.style.borderRadius = '10px';
+                            newPost.appendChild(video);
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
+
+                postsContainer.prepend(newPost);
+                postInput.value = ""; // Clear the input
+                mediaUpload.value = ""; // Clear the upload
+                updateTrendingPosts(newPost.cloneNode(true)); // Update trending posts
+                updateNotification(`You created a new post: "${postInput.value}"`);
+            } else {
+                alert('Please enter a post or upload media.');
+            }
+        }
+
+        function updateTrendingPosts(post) {
+            const trendingList = document.getElementById('trendingList');
+            trendingPosts.push(post);
+            trendingList.innerHTML = ''; // Clear current trending posts
+            trendingPosts.forEach(trendingPost => {
+                const trendingPostDiv = document.createElement('div');
+                trendingPostDiv.className = 'trending-post';
+                trendingPostDiv.appendChild(trendingPost);
+                trendingList.appendChild(trendingPostDiv);
+            });
+        }
+
+        function updateNotification(message) {
+            const notificationsList = document.getElementById('notificationsList');
+            const newNotification = document.createElement('li');
+            newNotification.className = 'notification-item';
+            newNotification.textContent = message;
+            notificationsList.prepend(newNotification);
+        }
+
+        function showPage(page) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => {
+                p.style.display = 'none'; // Hide all pages
+            });
+            document.getElementById(page).style.display = 'block'; // Show the selected page
+        }
+
+        function sendFriendRequest() {
+            const friendInput = document.getElementById('friendInput').value;
+            if (friendInput) {
+                if (!friends.includes(friendInput) && !pendingRequests.includes(friendInput)) {
+                    pendingRequests.push(friendInput);
+                    updatePendingRequests();
+                    updateNotification(`Sent a friend request to ${friendInput}.`);
+                } else {
+                    alert('Friend request already sent or you are already friends.');
+                }
+            } else {
+                alert('Please enter a friend\'s name.');
+            }
+        }
+
+        function updatePendingRequests() {
+            const pendingRequestsContainer = document.getElementById('pendingRequests');
+            pendingRequestsContainer.innerHTML = '';
+            pendingRequests.forEach(request => {
+                const requestItem = document.createElement('div');
+                requestItem.className = 'request-item';
+                requestItem.innerHTML = `${request} <button onclick="acceptRequest('${request}')">Accept</button>`;
+                pendingRequestsContainer.appendChild(requestItem);
+            });
+        }
+
+        function acceptRequest(name) {
+            friends.push(name);
+            pendingRequests.splice(pendingRequests.indexOf(name), 1);
+            updatePendingRequests();
+            updateFriendList();
+            updateNotification(`You are now friends with ${name}.`);
+        }
+
+        function updateFriendList() {
+            const friendListContainer = document.getElementById('friendList');
+            friendListContainer.innerHTML = '';
+            friends.forEach(friend => {
+                const friendItem = document.createElement('div');
+                friendItem.className = 'friend-item';
+                friendItem.textContent = friend;
+                friendListContainer.appendChild(friendItem);
+            });
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('messageUser Input').value;
+            const messageInput = document.getElementById('messageInput').value;
+
+            if (userInput && messageInput) {
+                if (!messages[userInput]) {
+                    messages[userInput] = [];
+                }
+                messages[userInput].push(messageInput);
+                updateMessageList(userInput);
+                document.getElementById('messageInput').value = ""; // Clear input
+                updateNotification(`You sent a message to ${userInput}.`);
+            } else {
+                alert('Please select a user and type a message.');
+            }
+        }
+
+        function updateMessageList(user) {
+            const messageList = document.getElementById('messageList');
+            messageList.innerHTML = ''; // Clear current messages
+            for (const friend in messages) {
+                const messageItem = document.createElement('div');
+                messageItem.className = 'message-item';
+                messageItem.textContent = `Chat with ${friend}`;
+                messageItem.onclick = function() { openChat(friend); };
+                messageList.appendChild(messageItem);
+            }
+        }
+
+        function openChat(user) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageContent = document.getElementById('messageContent');
+            messageContent.innerHTML = ''; // Clear previous messages
+            messages[user].forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message';
+                msgDiv.textContent = msg;
+                messageContent.appendChild(msgDiv);
+            });
+            document.getElementById('messageUser Input').value = user; // Set the user input
+            messageContainer.style.display = 'block'; // Show the message container
+        }
+
+        function joinGroup() {
+            const groupInput = document.getElementById('groupInput').value;
+            if (groupInput) {
+                if (!myGroups.includes(groupInput)) {
+                    myGroups.push(groupInput);
+                    updateMyGroupList();
+                    updateNotification(`You joined the group: ${groupInput}.`);
+                } else {
+                    alert('You are already a member of this group.');
+                }
+            } else {
+                alert('Please enter a group name.');
+            }
+        }
+
+        function updateMyGroupList() {
+            const myGroupListContainer = document.getElementById('myGroupList');
+            myGroupListContainer.innerHTML = '';
+            myGroups.forEach(group => {
+                const groupItem = document.createElement('div');
+                groupItem.className = 'group-item';
+                groupItem.textContent = group;
+                myGroupListContainer.appendChild(groupItem);
+            });
+        }
+    </script>
+</body>
+</html>
